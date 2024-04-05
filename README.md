@@ -38,3 +38,8 @@ This condition signifies that if the field `Priority` equals 'High' and the fiel
 
 ## Conclusion
 The Multi Edit component enhances user productivity by enabling simultaneous editing of multiple records and adding new multiple records seamlessly within Lightning Record Pages. By configuring the provided properties and applying field conditions, users can customize the component to meet their specific business requirements effectively.
+
+<a href="https://githubsfdeploy.herokuapp.com">
+  <img alt="Deploy to Salesforce"
+       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
+</a>
