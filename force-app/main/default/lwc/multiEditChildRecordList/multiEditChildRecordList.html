@@ -1,0 +1,32 @@
+<template>
+    <lightning-card title={relatedListLabel}>
+        <lightning-button icon-name="utility:edit" label="Add or Edit" slot="actions" onclick={handleEditRecord} alternative-text="Settings"></lightning-button>
+        <div class="slds-scrollable">
+            <template if:true={records}>
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                    <thead>
+                        <tr>
+                            <template for:each={fieldNames} for:item="field">
+                                <th key={field}>{field}</th>
+                            </template>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={records} for:item="rec">
+                            <tr key={rec.id} data-id={rec.id}>
+                                <template for:each={fieldsToDisplay} for:item="field">
+                                    <td key={field}>
+                                        <c-multi-edit-child-record-list-field-value-component record={rec} field={field}></c-multi-edit-child-record-list-field-value-component>
+                                    </td>
+                                </template>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:true={error}>
+                <div class="slds-text-color_error">{error}</div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

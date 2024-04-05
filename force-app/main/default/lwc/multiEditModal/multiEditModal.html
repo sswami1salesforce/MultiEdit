@@ -1,0 +1,46 @@
+<template>
+    <lightning-modal-header label="Mutile Edit/Create"></lightning-modal-header>
+    <lightning-modal-body>
+         <template for:each={records} for:item="rec">
+        <!--tst record edit form-->
+        <div key={rec.id} class="slds-p-bottom_large slds-p-left_large record-container">
+            <lightning-record-edit-form record-id={rec.id} object-api-name={relatedObjectApiName} density="comfy" onsuccess={onSave}>
+                <lightning-messages></lightning-messages>
+
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <template for:each={extractedFields} for:item="field">
+                        <div key={field.name} class="field-container slds-size_1-of-2">
+                           <template lwc:if={rec.id}>
+                                <lightning-input-field field-name={field.name} data-fieldname={field.name} data-record-id={rec.id} data-tempid={rec.tempid} onchange={handleFieldChange}></lightning-input-field>
+                            </template>
+                            <template lwc:elseif={field.isParentField}>
+                                <lightning-input-field field-name={field.name} data-fieldname={field.name} data-record-id={rec.id} data-tempid={rec.tempid} onchange={handleFieldChange} value={parentRecordId}></lightning-input-field>
+                            </template>
+                            <template lwc:else>
+                                <lightning-input-field field-name={field.name} data-fieldname={field.name} data-record-id={rec.id} data-tempid={rec.tempid} onchange={handleFieldChange} value=""></lightning-input-field>
+                            </template>
+                        </div>
+                    </template>
+                    <div class={computeGridClass2}>
+                        <lightning-button-group>
+                            <lightning-button label="Save" icon-name="utility:save" type="submit"></lightning-button>
+                            <lightning-button-icon icon-name="utility:delete" variant="border-filled" onclick={handleDeleteRecord} data-record-id={rec.id} data-tempid={rec.tempid} alternative-text="Delete"></lightning-button-icon>
+                            </lightning-button-group>
+                    </div>
+                </div>
+
+            </lightning-record-edit-form>
+        </div>
+    </template>
+
+    <!-- Add Record Button -->
+    
+
+ </lightning-modal-body>
+    <lightning-modal-footer>
+        <div class="add-record-container">
+            <lightning-button variant="brand" label="Add Record" onclick={addNewRecord}></lightning-button>
+        </div>
+        <lightning-button label="OK" onclick={handleOkay}></lightning-button>
+    </lightning-modal-footer>
+</template>
