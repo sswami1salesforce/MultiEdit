@@ -10,6 +10,7 @@ export default class multiEditModal extends LightningModal {
     @api computeGridClass;
     @api computeGridClass2;
     @api extractedFields;
+    @api fieldNames;
     @api relatedListId;
     @api relatedObjectApiName;
     @api parentField;
@@ -32,12 +33,14 @@ export default class multiEditModal extends LightningModal {
     }
 
     connectedCallback() {
-        // When the component is initialized, process existing records to add a unique identifier
+        this.addTempIds();
+    }
+
+    addTempIds(){
         this.records = this.records.map(record => ({
             ...record,
             tempid: record.id || `temp_${Date.now()}` // Use existing ID or assign a new temp ID
         }));
-        console.log('tst257'+this.extractedFields);
     }
 
     handleOkay() {
@@ -64,41 +67,43 @@ export default class multiEditModal extends LightningModal {
     }
 
 
-    onSave(event) {
+        onSave(event) {
 
-        const savedRecord = event.detail;
+            const savedRecord = this.transformDetailToRecord(event.detail);
 
-        // Check if the record already exists in the records array
-        const existingRecordIndex = this.records.findIndex(record => record.id === savedRecord.id);
+            // Check if the record already exists in the records array
+            const existingRecordIndex = this.records.findIndex(record => record.id === savedRecord.id);
 
-        if (existingRecordIndex !== -1) {
-            // Update the existing record in the records array
-            this.records = [
-                ...this.records.slice(0, existingRecordIndex),
-                savedRecord,
-                ...this.records.slice(existingRecordIndex + 1)
-            ];
-        } else {
-            // Add the newly created record to the records array
-            this.records = [...this.records, savedRecord];
+            if (existingRecordIndex !== -1) {
+                // Update the existing record in the records array
+                this.records = [
+                    ...this.records.slice(0, existingRecordIndex),
+                    savedRecord,
+                    ...this.records.slice(existingRecordIndex + 1)
+                ];
+            } else {
+                // Add the newly created record to the records array
+                this.records = [...this.records, savedRecord];
+            }
+
+            this.records = this.records.filter(record => record.id);
+            
+            const recordId = event.detail.id;
+            this.addTempIds();
+            
+            this.applyFieldConditions();
+            Toast.show({
+                label: '{0} has been created/updated',
+                labelLinks : [{
+                    url: `/lightning/r/${this.relatedObjectApiName}/${recordId}/view`,
+                    label: 'Record'
+                }],
+                mode: 'sticky',
+                variant: 'success',
+            }, this);
+
+
         }
-
-        this.records = this.records.filter(record => record.id);
-
-        const recordId = event.detail.id;
-        console.log('tst257'+JSON.stringify(event.detail));
-        Toast.show({
-            label: '{0} has been created/updated',
-            labelLinks : [{
-                url: `/lightning/r/${this.relatedObjectApiName}/${recordId}/view`,
-                label: 'Record'
-            }],
-            mode: 'sticky',
-            variant: 'success',
-        }, this);
-
-
-    }
 
     handleDeleteRecord(event) {
         const recordId = event.target.dataset.recordId;
@@ -192,5 +197,29 @@ export default class multiEditModal extends LightningModal {
             fieldElement.required = isMandatoryConditionMet;
         }
     }
+
+    transformDetailToRecord(detail) {
+        const record = {
+            apiName: detail.apiName,
+            childRelationships: detail.childRelationships,
+            fields: {},
+            id: detail.id,
+            lastModifiedById: detail.lastModifiedById,
+            lastModifiedDate: detail.lastModifiedDate,
+            recordTypeId: detail.recordTypeId,
+            recordTypeInfo: detail.recordTypeInfo,
+            systemModstamp: detail.systemModstamp
+        };
+    
+        // Loop through each field in extractedFields and add it to the record.fields object
+        this.fieldNames.forEach(fieldApiName => {
+            const fieldValue = detail.fields[fieldApiName] ? detail.fields[fieldApiName].value : null;
+            record.fields[fieldApiName] = fieldValue;
+            //record.fields[Id] = detail.id;
+        });
+        record.fields["Id"] = detail.id;
+        return record;
+    }
+    
 
 }

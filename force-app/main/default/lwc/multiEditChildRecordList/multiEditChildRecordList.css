@@ -1,11 +1,37 @@
-
-    .slds-scrollable {
-        overflow-x: auto;
+    .resizable-table {
+        table-layout: fixed;
+        width: 100%;
     }
-
-    @media (max-width: 768px) {
-        .slds-table_cell-buffer th,
-        .slds-table_cell-buffer td {
-            white-space: nowrap;
-        }
+    
+    .resizable-table th {
+        position: relative;
+        overflow: hidden;
     }
+    
+    .header-cell {
+        display: flex;
+        align-items: center;
+    }
+    
+    .cell-content {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .resize-handle {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 10px; /* Adjust the width of the resize handle */
+        cursor: col-resize;
+        background-color: #eee;
+    }
+    
+    /* Optional: add hover effect to resize handle */
+    .resize-handle:hover {
+        background-color: #ccc;
+    }
+    

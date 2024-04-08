@@ -88,6 +88,7 @@ export default class MultiEditChildRecordList extends LightningElement {
             computeGridClass: this.computeGridClass,
             computeGridClass2: this.computeGridClass2,
             extractedFields: this.extractedFields,
+            fieldNames: this.fieldNames,
             relatedListId : this.relatedListId,
             parentField : this.parentField,
             parentRecordId : this.parentRecordId,
